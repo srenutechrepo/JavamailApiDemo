@@ -1,0 +1,167 @@
+less secure apps
+================
+
+https://myaccount.google.com/lesssecureapps
+Login 
+Activate the option
+
+Important Protocols using in Javamail:
+======================================
+
+SMTP
+
+SMTP (Simple Mail Transfer Protocol)
+
+It provides a mechanism to deliver(send) the email using smtp server.If we use the SMTP server provided by the host provider, authentication is required for sending and receiving emails.
+
+POP (Post Office Protocol)
+
+It provides a mechanism to receive the email. 
+It provides support for single mail box for each user. 
+
+IMAP (Internet Message Access Protocol)
+
+IMAP is an advanced protocol for receiving messages.
+It provides support for multiple mail box for each user ,in addition to, mailbox can be shared by multiple users.
+
+MIME
+
+Multiple Internet Mail Extension (MIME) tells the browser what is being sent e.g. attachment, format of the messages etc. It is not known as mail transfer protocol but it is used by your mail program.
+
+More Info about IMAP and POP:
+=============================
+POP works by contacting your email service and downloading all of your new messages from it. Once they are downloaded onto your PC or Mac, they are deleted from the email service. This means that after the email is downloaded, it can only be accessed using the same computer. If you try to access your email from a different device, the messages that have been previously downloaded won't be available to you.
+
+Sent mail is stored locally on your PC or Mac, not on the email server.
+
+A lot of Internet Service Providers (ISPs) give you email accounts that use POP.
+
+
+IMAP allows you to access your email wherever you are, from any device. When you read an email message using IMAP, you aren't actually downloading or storing it on your computer; instead, you're reading it from the email service. As a result, you can check your email from different devices, anywhere in the world: your phone, a computer, a friend's computer.
+
+IMAP only downloads a message when you click on it, and attachments aren't automatically downloaded. This way you're able to check your messages a lot more quickly than POP.
+
+Note :IMAP is the recommended method when you need to check your emails from several different devices, such as a phone, laptop, and tablet.
+
+
+
+JavaMail API:
+
+The JavaMail API provides a platform-independent and protocol-independent framework to build mail and messaging applications. 
+
+The JavaMail is an API that is used to compose, write and read electronic messages (emails).
+
+
+Generally to  connect any mail server ,third party providers having TLS(Transport Layer Security) and SSL(Secure Sockets Layer) authentication for security.
+
+Note : JavaMail API is not part of standard JDK rather than form JavaEE, so you will have to download it from it’s official website – JavaMail API. Download the latest version of the JavaMail reference implementation and include it in your project build path. The jar file name is javax.mail.jar.
+
+<dependency>
+   <groupId>com.sun.mail</groupId>
+   <artifactId>javax.mail</artifactId>
+   <version>1.5.6</version>
+</dependency>
+
+Following jars are required
+
+javax.mail-x.x.x.jar
+activation-x.x.jar
+
+Java mail configuration Properties required:
+
+          // Set the smtp server host name using 'mail.smtp.host' property
+          properties.put("mail.smtp.host", "smtp.javatechblog.com");
+
+          /*
+           * If the SMTP server is not running on default port (25) you will also
+           * need to set mail.smtp.port property, not required if server is
+           * running on default port 25
+           */
+          properties.put("mail.smtp.port", "26");
+
+TLS
+
+       props.put("mail.smtp.auth", "true"); // enable authentication
+       props.put("mail.smtp.starttls.enable", "true"); // enable STARTTLS
+       props.put("mail.smtp.host", "smtp.gmail.com"); // SMTP Host
+       // Port for TLS/STARTTLS: 587
+       props.put("mail.smtp.port", "587");
+
+SSL
+       props.put("mail.smtp.auth", "true"); // enable SMTP authentication
+       // SSL Factory Class
+       props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+       props.put("mail.smtp.host", "smtp.gmail.com"); // SMTP Host
+       // Port for SSL: 465
+       props.put("mail.smtp.socketFactory.port", "465");
+       props.put("mail.smtp.socketFactory.fallback", "true");
+
+
+
+Four steps
+==========
+1)Create properties object. Load the details from propeties file.
+
+2)Create session object
+Session session = Session.getDefaultInstance(properties); 
+
+ 
+Session session = Session.getInstance(props,javax.mail.Authenticator);
+
+
+ Session session = Session.getInstance(props, 
+          new javax.mail.Authenticator() { 
+             
+            //override the getPasswordAuthentication method 
+            protected PasswordAuthentication  
+                           getPasswordAuthentication() { 
+                                         
+                return new PasswordAuthentication(username,  
+                                                 password); 
+            } 
+          }); 
+  
+
+3)Create Message
+
+MimeMessage message = new MimeMessage(session);
+message.setFrom(new InternetAddress(from)); 
+message.addRecipient(Message.RecipientType.TO, 
+                     new InternetAddress(to));  
+
+message.addRecipient(Message.RecipientType.CC, 
+                     new InternetAddress(cc));  
+
+message.addRecipient(Message.RecipientType.BCC, 
+                     new InternetAddress(bcc));  
+
+message.setSubject("subject"); 
+message.setSentDate(new Date()); 
+message.setText("Hello, aas is sending email ");  
+
+// Now set the HTML content
+message.setContent("<b>Hello Welcome!!!</b><br/>" 
+                                + "<a href=\"#\">Click this link</a>", "text/html");
+
+4)Send the message
+Transport.send(message);
+
+
+Multiple recipents
+==================
+InternetAddress[] myToList = InternetAddress.parse("first@gmail.com,second@gmail.com,third@gmail.com");
+			
+msg.setRecipients(Message.RecipientType.TO, myToList);
+
+
+eMail with attchments
+====================
+1)create Multipart  Multipart multipart = new MimeMultipart();
+2)Create MimeBodyPart objects as per your requirment
+
+MimeBodyPart htmlPart = new MimeBodyPart();
+
+3)Adding bodyPart to multipart object using 
+  multipart.addBodyPart(htmlPart); 
+4)MimeMessage msg = new MimeMessage(session);
+  msg.setContent(multipart);

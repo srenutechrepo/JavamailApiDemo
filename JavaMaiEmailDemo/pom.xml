@@ -8,7 +8,7 @@
 		<dependency>
 			<groupId>com.sun.mail</groupId>
 			<artifactId>javax.mail</artifactId>
-			<version>1.5.22</version>
+			<version>1.5.10</version>
 		</dependency>
 	</dependencies>
 </project>
